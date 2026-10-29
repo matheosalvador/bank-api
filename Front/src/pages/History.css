@@ -1,0 +1,89 @@
+/* History.css */
+
+.history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.history-container h1 {
+    margin: 0 0 1.5rem;
+    color: #1a1a2e;
+}
+
+.account-selector {
+    margin-bottom: 2rem;
+}
+
+.account-selector label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.account-selector select {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 1rem;
+    min-width: 300px;
+}
+
+.transactions-list {
+    overflow-x: auto;
+}
+
+.transactions-list table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.transactions-list th,
+.transactions-list td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.transactions-list th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.transactions-list tr.credit {
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.transactions-list tr.debit {
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge.credit {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge.debit {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.error-message {
+    color: #ef4444;
+    background: #fee2e2;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
