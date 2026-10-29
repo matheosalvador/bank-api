@@ -68,3 +68,6 @@ vite.svg
 
 # Fichiers de configuration locaux
 *.local
+
+# Tests
+src/api/test.js
