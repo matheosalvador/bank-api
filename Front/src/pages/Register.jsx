@@ -1,3 +1,5 @@
+import { NavLink, Outlet } from "react-router";
+
 export default function Register() {
     return (
         <>
