@@ -3,7 +3,8 @@ import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
-import { Routes, Route, Outlet, NavLink } from 'react-router'
+import { Routes, Route, Outlet, NavLink, Link } from 'react-router'
+import { useAuth } from "./context/AuthContext"
 import HomePage from "./pages/HomePage.jsx"
 import Accounts from "./pages/Accounts.jsx"
 import Register from "./pages/Register.jsx"
@@ -16,16 +17,23 @@ import Login from "./pages/Login.jsx"
 import NewAccount from "./pages/NewAccount.jsx"
 import Transfer from "./pages/Transfer.jsx"
 
+function Header() {
+  const { token, logout } = useAuth();
+  return token
+    ? <button onClick={logout}>Déconnexion</button>
+    : <Link to="/login">Connexion</Link>;
+}
+
 function Layout() {
   return (
     <>
       <header>
-        <nav>
+        <nav> 
           <NavLink to="/">Home</NavLink>
           <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/accounts">Accounts</NavLink>
           <NavLink to="/register">Register</NavLink>
-          <NavLink to="/login">Login</NavLink>
+          <Header />
         </nav>
       </header>
       <main>
@@ -57,4 +65,5 @@ function App() {
   )
 }
 
-export default App
+export { Header };
+export default App;
