@@ -1,3 +1,24 @@
+# Dependencies
 node_modules/
+
+# Build output
+build/
 dist/
-coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Cache
+.cache/

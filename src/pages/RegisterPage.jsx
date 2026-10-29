@@ -1,60 +1,28 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { api } from '../services/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { register } from '../services/demoAuth';
+
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError('');
     setLoading(true);
 
     try {
-      await api('/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      setSuccess(true);
+      await register(email.trim(), password);
+      navigate('/login');
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : "L'inscription a échoué.");
     } finally {
       setLoading(false);
     }
-  };
-
-  if (success) {
-    return (
-      <main className="page-shell">
-        <header className="site-header">
-          <Link className="brand" to="/register" aria-label="Noria, accueil">
-            <span className="brand-mark" aria-hidden="true">n</span>
-            <span>noria</span>
-          </Link>
-        </header>
-        <section className="auth-layout">
-          <div className="auth-card success-state">
-            <span className="success-icon" aria-hidden="true">✓</span>
-            <span className="eyebrow">C'EST FAIT</span>
-            <h1>Inscription réussie !</h1>
-            <p className="intro">Votre demande a bien été prise en compte.</p>
-            <Link className="text-link" to="/login">Se connecter</Link>
-          </div>
-          <aside className="benefit-panel">
-            <span className="benefit-symbol" aria-hidden="true">n</span>
-            <div className="benefit-copy">
-              <h2>Votre argent, en mouvement.</h2>
-              <p>Un compte pensé pour vous accompagner au quotidien.</p>
-            </div>
-          </aside>
-        </section>
-      </main>
-    );
   }
 
   return (
@@ -81,7 +49,7 @@ export default function RegisterPage() {
                 type="email"
                 placeholder="vous@exemple.fr"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 required
               />
             </div>
@@ -94,7 +62,7 @@ export default function RegisterPage() {
                 type="password"
                 placeholder="Choisissez un mot de passe"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
                 required
               />
             </div>
