@@ -70,4 +70,4 @@ vite.svg
 *.local
 
 # Tests
-src/api/test.js
+src/test/
