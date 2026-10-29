@@ -5,6 +5,7 @@ import viteLogo from './assets/vite.svg'
 import './App.css'
 import { Routes, Route, Outlet, NavLink, Link } from 'react-router'
 import { useAuth } from "./context/AuthContext"
+import ProtectedRoute from "./components/ProtectedRoute"
 import HomePage from "./pages/HomePage.jsx"
 import Accounts from "./pages/Accounts.jsx"
 import Register from "./pages/Register.jsx"
@@ -28,12 +29,12 @@ function Layout() {
   return (
     <>
       <header>
-        <nav> 
+        <nav>
+          <Header />
           <NavLink to="/">Home</NavLink>
           <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/accounts">Accounts</NavLink>
           <NavLink to="/register">Register</NavLink>
-          <Header />
         </nav>
       </header>
       <main>
@@ -48,17 +49,22 @@ function App() {
     <>
       <Routes>
         <Route element={<Layout />}>
+          {/* Routes publiques */}
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/deposit" element={<Deposit />} />
-          <Route path="/transfer" element={<Transfer />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/accounts/:id" element={<Details />} />
-          <Route path="/accounts/new" element={<NewAccount />} />
-          <Route path="/accounts" element={<Accounts />} />
-          <Route path="/accounts/:id/close" element={<CloseAccount />} />
+          
+          {/* Routes protégées (nécessitent un token) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/deposit" element={<Deposit />} />
+            <Route path="/transfer" element={<Transfer />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/accounts/:id" element={<Details />} />
+            <Route path="/accounts/new" element={<NewAccount />} />
+            <Route path="/accounts" element={<Accounts />} />
+            <Route path="/accounts/:id/close" element={<CloseAccount />} />
+          </Route>
         </Route>
       </Routes>
     </>
