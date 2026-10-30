@@ -4,6 +4,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import AccountsPage from './pages/AccountsPage';
+import NewAccountPage from './pages/NewAccountPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import './styles.css';
 
@@ -19,6 +21,22 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           element={(
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/accounts"
+          element={(
+            <ProtectedRoute>
+              <AccountsPage />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/accounts/new"
+          element={(
+            <ProtectedRoute>
+              <NewAccountPage />
             </ProtectedRoute>
           )}
         />
