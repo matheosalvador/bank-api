@@ -4,6 +4,7 @@ import {
   getBeneficiaries,
   getAccount,
   getAccounts,
+  getTransactions,
   openAccount,
   saveBeneficiary,
   transferBetweenAccounts,
@@ -46,6 +47,15 @@ describe('accounts', () => {
     expect(updatedAccount.balanceCents).toBe(1234);
     expect(getAccount('demo@noria.fr', account.id).balanceCents).toBe(1234);
     expect(getAccount('demo@noria.fr', otherAccount.id).balanceCents).toBe(0);
+    expect(getTransactions('demo@noria.fr', account.id)).toMatchObject([
+      {
+        amountCents: 1234,
+        sourceAccountId: null,
+        sourceLabel: 'Dépôt externe',
+        recipientAccountId: account.id,
+        type: 'credit',
+      },
+    ]);
   });
 
   it('rejects invalid deposits and unknown accounts', () => {
@@ -70,6 +80,23 @@ describe('accounts', () => {
     expect(result.recipientAccount.balanceCents).toBe(1250);
     expect(getAccount('demo@noria.fr', source.id).balanceCents).toBe(3750);
     expect(getAccount('other@noria.fr', recipient.id).balanceCents).toBe(1250);
+    const sourceTransactions = getTransactions('demo@noria.fr', source.id);
+    const recipientTransactions = getTransactions('other@noria.fr', recipient.id);
+    expect(sourceTransactions).toHaveLength(2);
+    expect(sourceTransactions[0]).toMatchObject({
+      amountCents: 1250,
+      sourceAccountId: source.id,
+      recipientAccountId: recipient.id,
+      type: 'debit',
+    });
+    expect(recipientTransactions).toHaveLength(1);
+    expect(recipientTransactions[0]).toMatchObject({
+      id: sourceTransactions[0].id,
+      amountCents: 1250,
+      sourceAccountId: source.id,
+      recipientAccountId: recipient.id,
+      type: 'credit',
+    });
     expect(() => transferBetweenAccounts('demo@noria.fr', source.id, 'unknown', 100))
       .toThrow('Le compte destinataire est introuvable.');
     expect(() => transferBetweenAccounts('demo@noria.fr', source.id, recipient.id, 4000))

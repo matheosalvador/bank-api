@@ -39,12 +39,40 @@ function parseAccounts(storedAccounts) {
       || typeof account.openedAt !== 'string'
       || !Number.isFinite(Date.parse(account.openedAt))
       || !Number.isInteger(account.balanceCents)
+      || (
+        account.transactions !== undefined
+        && (
+          !Array.isArray(account.transactions)
+          || account.transactions.some((transaction) => (
+            transaction === null
+            || typeof transaction !== 'object'
+            || typeof transaction.id !== 'string'
+            || !Number.isSafeInteger(transaction.amountCents)
+            || transaction.amountCents <= 0
+            || typeof transaction.date !== 'string'
+            || !Number.isFinite(Date.parse(transaction.date))
+            || !['debit', 'credit'].includes(transaction.type)
+            || (
+              transaction.sourceAccountId !== null
+              && typeof transaction.sourceAccountId !== 'string'
+            )
+            || typeof transaction.recipientAccountId !== 'string'
+            || (
+              transaction.sourceLabel !== undefined
+              && typeof transaction.sourceLabel !== 'string'
+            )
+          ))
+        )
+      )
     ))
   ) {
     throw new Error('Les données des comptes enregistrés sont invalides.');
   }
 
-  return accounts;
+  return accounts.map((account) => ({
+    ...account,
+    transactions: account.transactions || [],
+  }));
 }
 
 export function getAccounts(email) {
@@ -67,6 +95,16 @@ export function getAccount(email, accountId) {
   return account;
 }
 
+export function getTransactions(email, accountId) {
+  return getAccount(email, accountId).transactions
+    .map((transaction, index) => ({ transaction, index }))
+    .sort((first, second) => (
+      Date.parse(second.transaction.date) - Date.parse(first.transaction.date)
+      || second.index - first.index
+    ))
+    .map(({ transaction }) => transaction);
+}
+
 export function openAccount(email) {
   const accounts = getAccounts(email);
   const storageKey = getStorageKey(email);
@@ -75,6 +113,7 @@ export function openAccount(email) {
     label: 'Compte courant',
     balanceCents: 0,
     openedAt: new Date().toISOString(),
+    transactions: [],
   };
 
   try {
@@ -105,7 +144,21 @@ export function depositIntoAccount(email, accountId, amountCents) {
     throw new Error('Le solde du compte dépasse la limite autorisée.');
   }
 
-  const updatedAccount = { ...accounts[accountIndex], balanceCents: updatedBalance };
+  const account = accounts[accountIndex];
+  const transaction = {
+    id: `TX-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+    amountCents,
+    date: new Date().toISOString(),
+    sourceAccountId: null,
+    sourceLabel: 'Dépôt externe',
+    recipientAccountId: accountId,
+    type: 'credit',
+  };
+  const updatedAccount = {
+    ...account,
+    balanceCents: updatedBalance,
+    transactions: [...account.transactions, transaction],
+  };
   accounts[accountIndex] = updatedAccount;
 
   try {
@@ -261,12 +314,32 @@ export function transferBetweenAccounts(email, sourceAccountId, recipientAccount
   }
 
   const nextSourceAccounts = [...sourceAccounts];
-  nextSourceAccounts[sourceIndex] = { ...sourceAccount, balanceCents: updatedSourceBalance };
+  const transactionId = `TX-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+  const transactionDate = new Date().toISOString();
+  const transaction = {
+    id: transactionId,
+    amountCents,
+    date: transactionDate,
+    sourceAccountId,
+    recipientAccountId: normalizedRecipientId,
+  };
+  nextSourceAccounts[sourceIndex] = {
+    ...sourceAccount,
+    balanceCents: updatedSourceBalance,
+    transactions: [
+      ...sourceAccount.transactions,
+      { ...transaction, type: 'debit' },
+    ],
+  };
 
   if (recipientLocation.email === email) {
     nextSourceAccounts[recipientLocation.accountIndex] = {
       ...recipientAccount,
       balanceCents: updatedRecipientBalance,
+      transactions: [
+        ...recipientAccount.transactions,
+        { ...transaction, type: 'credit' },
+      ],
     };
     try {
       window.localStorage.setItem(getStorageKey(email), JSON.stringify(nextSourceAccounts));
@@ -278,6 +351,10 @@ export function transferBetweenAccounts(email, sourceAccountId, recipientAccount
     nextRecipientAccounts[recipientLocation.accountIndex] = {
       ...recipientAccount,
       balanceCents: updatedRecipientBalance,
+      transactions: [
+        ...recipientAccount.transactions,
+        { ...transaction, type: 'credit' },
+      ],
     };
     const sourceStorageKey = getStorageKey(email);
     const recipientStorageKey = getStorageKey(recipientLocation.email);
@@ -309,6 +386,10 @@ export function transferBetweenAccounts(email, sourceAccountId, recipientAccount
     recipientAccount: {
       ...recipientAccount,
       balanceCents: updatedRecipientBalance,
+      transactions: [
+        ...recipientAccount.transactions,
+        { ...transaction, type: 'credit' },
+      ],
     },
   };
 }

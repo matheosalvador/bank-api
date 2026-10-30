@@ -44,7 +44,7 @@ describe('TransferPage', () => {
       { name: 'Alex', accountId: recipient.id },
     ]);
 
-    await user.selectOptions(screen.getByLabelText('Bénéficiaire enregistré'), recipient.id);
+    await user.selectOptions(screen.getByLabelText('Bénéficiaire ou mes autres comptes'), recipient.id);
     await user.type(screen.getByLabelText('Montant (€)'), '12.50');
     await user.click(screen.getByRole('button', { name: 'Confirmer le virement' }));
 
