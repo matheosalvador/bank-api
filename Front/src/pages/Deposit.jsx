@@ -126,6 +126,13 @@ export default function Deposit() {
                     >
                         Annuler
                     </button>
+                    <button 
+                        type="button" 
+                        onClick={() => navigate('/dashboard')}
+                        className="btn-secondary"
+                    >
+                        Retour au dashboard
+                    </button>
                 </div>
             </form>
         </div>

@@ -63,7 +63,15 @@ export default function CloseAccount() {
     }
 
     if (error) {
-        return <div className="form-container"><div className="error-message">{error}</div></div>;
+        return (
+            <div className="form-container">
+                <div className="error-message">{error}</div>
+                <div className="action-buttons" style={{ marginTop: '1rem' }}>
+                    <Link to="/accounts" className="btn-primary">Retour aux comptes</Link>
+                    <Link to="/dashboard" className="btn-secondary">Retour au dashboard</Link>
+                </div>
+            </div>
+        );
     }
 
     if (success) {
@@ -78,7 +86,15 @@ export default function CloseAccount() {
     }
 
     if (!account) {
-        return <div className="form-container"><p>Compte introuvable.</p></div>;
+        return (
+            <div className="form-container">
+                <p>Compte introuvable ou vous n'êtes pas autorisé à accéder à ce compte.</p>
+                <div className="action-buttons" style={{ marginTop: '1rem' }}>
+                    <Link to="/accounts" className="btn-primary">Voir mes comptes</Link>
+                    <Link to="/dashboard" className="btn-secondary">Retour au dashboard</Link>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -97,6 +113,7 @@ export default function CloseAccount() {
                     <p>⚠️ Vous ne pouvez pas clôturer le compte principal.</p>
                     <div className="action-buttons">
                         <Link to="/accounts" className="btn-primary">Retour aux comptes</Link>
+                        <Link to="/dashboard" className="btn-secondary">Retour au dashboard</Link>
                     </div>
                 </div>
             )}
@@ -116,6 +133,9 @@ export default function CloseAccount() {
                         <Link to="/accounts" className="btn-secondary">
                             Retour aux comptes
                         </Link>
+                        <Link to="/dashboard" className="btn-secondary">
+                            Retour au dashboard
+                        </Link>
                     </div>
                 </div>
             )}
@@ -130,6 +150,7 @@ export default function CloseAccount() {
                             {loading ? 'Clôture en cours...' : 'Clôturer le compte'}
                         </button>
                         <Link to="/accounts" className="btn-secondary">Annuler</Link>
+                        <Link to="/dashboard" className="btn-secondary">Retour au dashboard</Link>
                     </div>
                 </div>
             )}

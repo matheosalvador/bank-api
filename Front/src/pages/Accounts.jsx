@@ -43,7 +43,10 @@ export default function Accounts() {
         <div className="accounts-page">
             <div className="page-header">
                 <h1>Mes comptes</h1>
-                <Link to="/accounts/new" className="btn-primary">Ouvrir un nouveau compte</Link>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <Link to="/accounts/new" className="btn-primary">Ouvrir un nouveau compte</Link>
+                    <Link to="/dashboard" className="btn-secondary">Retour au dashboard</Link>
+                </div>
             </div>
 
             {error && <div className="error-message">{error}</div>}
@@ -77,6 +80,8 @@ export default function Accounts() {
                                     <td className="actions">
                                         <Link to={`/accounts/${account.id}`} className="btn-small btn-primary">Voir</Link>
                                         <Link to={`/accounts/${account.id}/deposits`} className="btn-small btn-primary">Dépôt</Link>
+                                        <Link to="/transfer" state={{ fromAccountId: account.id }} className="btn-small btn-primary">Virement</Link>
+                                        <Link to={`/history?accountId=${account.id}`} className="btn-small btn-primary">Historique</Link>
                                         {account.type !== 'principal' && (
                                             <Link 
                                                 to={`/accounts/${account.id}/close`}

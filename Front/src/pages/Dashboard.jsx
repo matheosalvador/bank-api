@@ -80,14 +80,16 @@ export default function Dashboard() {
                         {accounts.map((account) => (
                             <div key={account.id} className="account-card">
                                 <div className="account-info">
-                                    <h3>Compte {account.type}</h3>
+                                    <h3>Compte {account.type === 'principal' ? 'Principal' : 'Secondaire'}</h3>
                                     <p className="iban">{account.iban}</p>
                                     <p className="balance">{account.balance.toFixed(2)} €</p>
+                                    <p><strong>Date d'ouverture:</strong> {new Date(account.createdAt).toLocaleDateString('fr-FR')}</p>
                                 </div>
                                 <div className="account-actions">
                                     <Link to={`/accounts/${account.id}`} className="btn-small btn-primary">Détails</Link>
                                     <Link to={`/accounts/${account.id}/deposits`} className="btn-small btn-primary">Dépôt</Link>
-                                    <Link to="/transfer" className="btn-small btn-primary">Virement</Link>
+                                    <Link to="/transfer" state={{ fromAccountId: account.id }} className="btn-small btn-primary">Virement</Link>
+                                    <Link to={`/history?accountId=${account.id}`} className="btn-small btn-primary">Historique</Link>
                                 </div>
                             </div>
                         ))}

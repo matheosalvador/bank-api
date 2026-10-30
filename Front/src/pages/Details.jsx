@@ -5,10 +5,9 @@ import api from '../api/api';
 import './Details.css';
 
 export default function Details() {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const { id: accountId } = useParams();
     const [account, setAccount] = useState(null);
-    const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -16,43 +15,70 @@ export default function Details() {
     useEffect(() => {
         if (!token || !accountId) return;
         
-        const fetchData = async () => {
+        const fetchAccount = async () => {
             try {
                 setLoading(true);
-                const [accountData, transactionsData] = await Promise.all([
-                    api('GET', `/accounts/${accountId}`, null, { token }),
-                    api('GET', `/accounts/${accountId}/transactions`, null, { token })
-                ]);
+                setError('');
+                const accountData = await api('GET', `/accounts/${accountId}`, null, { token });
+                
+                // Vérification que le compte appartient à l'utilisateur
+                if (!accountData || (user && accountData.userId !== user.id)) {
+                    throw new Error('Compte introuvable ou vous n\'êtes pas autorisé à accéder à ce compte.');
+                }
+                
                 setAccount(accountData);
-                setTransactions(transactionsData);
             } catch (err) {
                 setError(err.message);
+                setAccount(null);
             } finally {
                 setLoading(false);
             }
         };
         
-        fetchData();
-    }, [token, accountId]);
+        fetchAccount();
+    }, [token, accountId, user]);
 
     if (!accountId) {
         return (
             <div className="details-container">
-                <p>ID de compte manquant.</p>
+                <div className="error-message">
+                    <p>ID de compte manquant.</p>
+                    <Link to="/dashboard" className="btn-primary">Retour au tableau de bord</Link>
+                </div>
             </div>
         );
     }
 
     if (loading) {
-        return <div className="details-container"><p>Chargement...</p></div>;
+        return <div className="details-container"><p>Chargement des détails du compte...</p></div>;
     }
 
     if (error) {
-        return <div className="details-container"><div className="error-message">{error}</div></div>;
+        return (
+            <div className="details-container">
+                <div className="error-message">
+                    <p>{error}</p>
+                    <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+                        <Link to="/accounts" className="btn-primary">Voir mes comptes</Link>
+                        <Link to="/dashboard" className="btn-secondary">Retour au tableau de bord</Link>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (!account) {
-        return <div className="details-container"><p>Compte introuvable.</p></div>;
+        return (
+            <div className="details-container">
+                <div className="error-message">
+                    <p>Compte introuvable ou vous n'êtes pas autorisé à accéder à ce compte.</p>
+                    <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+                        <Link to="/accounts" className="btn-primary">Voir mes comptes</Link>
+                        <Link to="/dashboard" className="btn-secondary">Retour au tableau de bord</Link>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -60,12 +86,21 @@ export default function Details() {
             <div className="account-header">
                 <h1>Détails du compte</h1>
                 <div className="account-actions">
-                    <Link to={`/accounts/${accountId}/deposits`} className="btn-small btn-primary">Dépôt</Link>
-                    <Link to="/transfer" state={{ fromAccountId: accountId }} className="btn-small btn-primary">Virement</Link>
-                    <Link to={`/accounts/${accountId}/statement`} className="btn-small btn-secondary" target="_blank" rel="noopener noreferrer">
-                        Relevé PDF
+                    <Link to={`/accounts/${accountId}/deposits`} className="btn-small btn-primary">
+                        Faire un dépôt
                     </Link>
-                    <button onClick={() => navigate('/accounts')} className="btn-small btn-secondary">Retour</button>
+                    <Link to="/transfer" state={{ fromAccountId: accountId }} className="btn-small btn-primary">
+                        Faire un virement
+                    </Link>
+                    <Link to={`/history?accountId=${accountId}`} className="btn-small btn-primary">
+                        Voir l'historique
+                    </Link>
+                    <Link to="/dashboard" className="btn-small btn-secondary">
+                        Retour au dashboard
+                    </Link>
+                    <button onClick={() => navigate('/accounts')} className="btn-small btn-secondary">
+                        Retour aux comptes
+                    </button>
                 </div>
             </div>
 
@@ -73,9 +108,9 @@ export default function Details() {
                 <div className="info-card">
                     <h2>Informations du compte</h2>
                     <p><strong>Type:</strong> {account.type === 'principal' ? 'Principal' : 'Secondaire'}</p>
-                    <p><strong>IBAN:</strong> {account.iban}</p>
+                    <p><strong>Numéro de compte (IBAN):</strong> {account.iban}</p>
                     <p><strong>Solde:</strong> {account.balance.toFixed(2)} €</p>
-                    <p><strong>Date de création:</strong> {new Date(account.createdAt).toLocaleDateString('fr-FR')}</p>
+                    <p><strong>Date d'ouverture:</strong> {new Date(account.createdAt).toLocaleDateString('fr-FR')}</p>
                 </div>
 
                 {account.type !== 'principal' && (
@@ -89,43 +124,10 @@ export default function Details() {
                 )}
             </div>
 
-            <div className="transactions-section">
-                <h2>Historique des transactions</h2>
-                
-                {transactions.length === 0 ? (
-                    <p>Aucune transaction pour ce compte.</p>
-                ) : (
-                    <table className="transactions-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Libellé</th>
-                                <th>Montant</th>
-                                <th>Direction</th>
-                                <th>IBAN source</th>
-                                <th>IBAN destination</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {transactions.map((tx) => (
-                                <tr key={tx.id} className={tx.direction}>
-                                    <td>{new Date(tx.createdAt).toLocaleString('fr-FR')}</td>
-                                    <td>{tx.kind === 'deposit' ? 'Dépôt' : 'Virement'}</td>
-                                    <td>{tx.label}</td>
-                                    <td>{tx.amount.toFixed(2)} €</td>
-                                    <td>
-                                        <span className={`badge ${tx.direction}`}>
-                                            {tx.direction === 'credit' ? 'Crédit' : 'Débit'}
-                                        </span>
-                                    </td>
-                                    <td>{tx.fromIban || 'N/A'}</td>
-                                    <td>{tx.toIban}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
+            <div className="back-link">
+                <Link to="/dashboard" className="btn-secondary">
+                    ← Retour au tableau de bord
+                </Link>
             </div>
         </div>
     );

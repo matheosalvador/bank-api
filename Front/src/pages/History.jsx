@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import api from '../api/api';
 import './History.css';
 
 export default function History() {
     const { token } = useAuth();
+    const [searchParams] = useSearchParams();
+    const location = useLocation();
     const [accounts, setAccounts] = useState([]);
     const [selectedAccountId, setSelectedAccountId] = useState('');
     const [transactions, setTransactions] = useState([]);
@@ -20,7 +22,12 @@ export default function History() {
                 setLoading(true);
                 const data = await api('GET', '/accounts', null, { token });
                 setAccounts(data);
-                if (data.length > 0) {
+                
+                // Vérifier si un accountId est passé dans l'URL
+                const urlAccountId = searchParams.get('accountId');
+                if (urlAccountId && data.some(acc => acc.id.toString() === urlAccountId)) {
+                    setSelectedAccountId(urlAccountId);
+                } else if (data.length > 0) {
                     setSelectedAccountId(data[0].id.toString());
                 }
             } catch (err) {
@@ -31,7 +38,7 @@ export default function History() {
         };
         
         fetchAccounts();
-    }, [token]);
+    }, [token, searchParams]);
 
     useEffect(() => {
         if (!token || !selectedAccountId) return;
@@ -117,8 +124,9 @@ export default function History() {
                 </div>
             )}
             
-            <div style={{ marginTop: '2rem' }}>
+            <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
                 <Link to="/accounts" className="btn-secondary">← Retour aux comptes</Link>
+                <Link to="/dashboard" className="btn-secondary">Retour au tableau de bord</Link>
             </div>
         </div>
     );

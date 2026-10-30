@@ -176,6 +176,13 @@ export default function Transfer() {
                         >
                             Annuler
                         </button>
+                        <button 
+                            type="button" 
+                            onClick={() => navigate('/dashboard')}
+                            className="btn-secondary"
+                        >
+                            Retour au dashboard
+                        </button>
                     </div>
                 </form>
             )}
