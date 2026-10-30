@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { register } from '../services/demoAuth';
 import { api } from '../services/api';
 
 export default function RegisterPage() {
