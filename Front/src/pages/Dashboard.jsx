@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/api';
 import './Dashboard.css';

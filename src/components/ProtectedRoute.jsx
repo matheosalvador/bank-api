@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { getAuthToken } from '../services/demoAuth';
 
 export function ProtectedRoute({ children }) {
