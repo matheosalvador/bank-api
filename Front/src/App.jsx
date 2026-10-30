@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { Routes, Route, Outlet, NavLink, Link } from 'react-router-dom'
+import { Routes, Route, Outlet, NavLink, Link } from 'react-router'
 import { useAuth } from "./context/AuthContext"
 import HomePage from "./pages/HomePage.jsx"
 import Accounts from "./pages/Accounts.jsx"
