@@ -13,23 +13,22 @@ export default function DashboardPage() {
   const email = getAuthEmail();
   const [accountState] = useState(() => {
     try {
-      const accounts = getAccounts(email);
-      const totalBalance = accounts.reduce((sum, account) => sum + account.balanceCents, 0);
-      return { accounts, totalBalance, error: '' };
+      return { accounts: getAccounts(email), error: '' };
     } catch (loadError) {
       return {
         accounts: [],
-        totalBalance: 0,
-        error: loadError instanceof Error ? loadError.message : 'Impossible de charger les comptes.',
+        error: loadError instanceof Error ? loadError.message : 'Les comptes sont indisponibles.',
       };
     }
   });
-  const { accounts, totalBalance, error } = accountState;
+  const { accounts, error } = accountState;
 
   function handleLogout() {
     logout();
     navigate('/login', { replace: true });
   }
+
+  const totalBalance = accounts.reduce((total, account) => total + account.balanceCents, 0);
 
   return (
     <main className="page-shell">
@@ -42,41 +41,44 @@ export default function DashboardPage() {
           Se déconnecter
         </button>
       </header>
-      <section className="dashboard-card">
-        <span className="eyebrow">ESPACE CLIENT</span>
-        <h1>Bienvenue sur votre dashboard.</h1>
-        
-        <div className="dashboard-summary">
-          <p className="intro">
-            Vous êtes connecté avec l'adresse : <strong>{email}</strong>
-          </p>
-          
-          <div className="stats-grid">
-            <div className="stat-card">
-              <span className="stat-label">Nombre de comptes</span>
-              <strong className="stat-value">{accounts.length}</strong>
-            </div>
-            <div className="stat-card">
-              <span className="stat-label">Solde total</span>
-              <strong className="stat-value">{euroFormat.format(totalBalance / 100)}</strong>
-            </div>
-          </div>
+      <section className="dashboard-content">
+        <div className="dashboard-welcome">
+          <span className="eyebrow">ESPACE CLIENT</span>
+          <h1>Bonjour, bienvenue chez Noria.</h1>
+          <p className="intro">Connecté en tant que <strong>{email || 'utilisateur inconnu'}</strong></p>
         </div>
 
         {error && <p className="form-error" role="alert">{error}</p>}
 
-        <div className="dashboard-actions">
-          <Link className="action-link" to="/accounts">
-            La liste de mes comptes
-          </Link>
-          <Link className="action-link secondary" to="/accounts/new">
-            Ouvrir un nouveau compte
-          </Link>
-        </div>
-        
-        <p className="demo-notice">
-          Cette connexion est une simulation locale. Aucun compte réel ni donnée bancaire n’est enregistré.
-        </p>
+        {!error && (
+          <div className="account-summary" aria-label="Résumé de vos comptes">
+            <article className="summary-card">
+              <span className="summary-label">Nombre de comptes</span>
+              <strong className="summary-value">{accounts.length}</strong>
+            </article>
+            <article className="summary-card summary-card-balance">
+              <span className="summary-label">Solde total</span>
+              <strong className="summary-value">{euroFormat.format(totalBalance / 100)}</strong>
+              <span className="summary-caption">Calculé à partir de vos comptes</span>
+            </article>
+          </div>
+        )}
+
+        <section className="dashboard-card dashboard-actions">
+          <h2>Gérez vos comptes</h2>
+          <p className="intro">Consultez vos comptes ou ouvrez-en un nouveau en quelques instants.</p>
+          <div className="dashboard-links">
+            <Link className="action-link action-link-secondary" to="/accounts">
+              Voir la liste de mes comptes
+            </Link>
+            <Link className="action-link" to="/accounts/new">
+              Ouvrir un nouveau compte
+            </Link>
+          </div>
+          <p className="demo-notice">
+            Espace de démonstration : les comptes et leurs soldes sont enregistrés uniquement dans ce navigateur.
+          </p>
+        </section>
       </section>
     </main>
   );

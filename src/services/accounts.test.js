@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { getAccounts, openAccount } from './accounts';
+import {
+  depositIntoAccount,
+  getAccount,
+  getAccounts,
+  openAccount,
+} from './accounts';
 
 describe('accounts', () => {
   beforeEach(() => {
@@ -26,6 +31,28 @@ describe('accounts', () => {
 
     expect(() => getAccounts('demo@noria.fr')).toThrow(
       'Les données des comptes enregistrés sont illisibles.',
+    );
+  });
+
+  it('deposits an exact amount into the selected account and persists the new balance', () => {
+    const account = openAccount('demo@noria.fr');
+    const otherAccount = openAccount('demo@noria.fr');
+
+    const updatedAccount = depositIntoAccount('demo@noria.fr', account.id, 1234);
+
+    expect(updatedAccount.balanceCents).toBe(1234);
+    expect(getAccount('demo@noria.fr', account.id).balanceCents).toBe(1234);
+    expect(getAccount('demo@noria.fr', otherAccount.id).balanceCents).toBe(0);
+  });
+
+  it('rejects invalid deposits and unknown accounts', () => {
+    const account = openAccount('demo@noria.fr');
+
+    expect(() => depositIntoAccount('demo@noria.fr', account.id, 0)).toThrow(
+      'Le montant du dépôt doit être positif.',
+    );
+    expect(() => depositIntoAccount('demo@noria.fr', 'unknown', 100)).toThrow(
+      'Ce compte est introuvable.',
     );
   });
 });

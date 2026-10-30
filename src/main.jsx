@@ -6,8 +6,14 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AccountsPage from './pages/AccountsPage';
 import NewAccountPage from './pages/NewAccountPage';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import AccountDetailPage from './pages/AccountDetailPage';
+import DepositPage from './pages/DepositPage';
+import { getAuthToken } from './services/demoAuth';
 import './styles.css';
+
+function ProtectedRoute({ children }) {
+  return getAuthToken() ? children : <Navigate to="/login" replace />;
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -29,6 +35,22 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           element={(
             <ProtectedRoute>
               <AccountsPage />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/accounts/:accountId"
+          element={(
+            <ProtectedRoute>
+              <AccountDetailPage />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/accounts/:accountId/deposit"
+          element={(
+            <ProtectedRoute>
+              <DepositPage />
             </ProtectedRoute>
           )}
         />

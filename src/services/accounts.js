@@ -46,6 +46,15 @@ export function getAccounts(email) {
   return accounts;
 }
 
+export function getAccount(email, accountId) {
+  const account = getAccounts(email).find((item) => item.id === accountId);
+  if (!account) {
+    throw new Error('Ce compte est introuvable.');
+  }
+
+  return account;
+}
+
 export function openAccount(email) {
   const accounts = getAccounts(email);
   const storageKey = getStorageKey(email);
@@ -66,4 +75,32 @@ export function openAccount(email) {
   }
 
   return account;
+}
+
+export function depositIntoAccount(email, accountId, amountCents) {
+  if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
+    throw new Error('Le montant du dépôt doit être positif.');
+  }
+
+  const accounts = getAccounts(email);
+  const accountIndex = accounts.findIndex((account) => account.id === accountId);
+  if (accountIndex === -1) {
+    throw new Error('Ce compte est introuvable.');
+  }
+
+  const updatedBalance = accounts[accountIndex].balanceCents + amountCents;
+  if (!Number.isSafeInteger(updatedBalance)) {
+    throw new Error('Le solde du compte dépasse la limite autorisée.');
+  }
+
+  const updatedAccount = { ...accounts[accountIndex], balanceCents: updatedBalance };
+  accounts[accountIndex] = updatedAccount;
+
+  try {
+    window.localStorage.setItem(getStorageKey(email), JSON.stringify(accounts));
+  } catch {
+    throw new Error('Impossible d’enregistrer le dépôt dans ce navigateur.');
+  }
+
+  return updatedAccount;
 }

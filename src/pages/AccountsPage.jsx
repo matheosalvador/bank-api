@@ -70,7 +70,9 @@ export default function AccountsPage() {
             {accounts.map((account) => (
               <article className="account-card" key={account.id}>
                 <div>
-                  <span className="account-type">{account.label}</span>
+                  <Link className="account-type account-detail-link" to={`/accounts/${encodeURIComponent(account.id)}`}>
+                    {account.label}
+                  </Link>
                   <p className="account-reference">Référence de démonstration : {account.id}</p>
                   <p className="account-date">
                     Ouvert le {dateFormat.format(new Date(account.openedAt))}
@@ -79,6 +81,9 @@ export default function AccountsPage() {
                 <strong className="account-balance">
                   {euroFormat.format(account.balanceCents / 100)}
                 </strong>
+                <Link className="action-link action-link-secondary" to={`/accounts/${encodeURIComponent(account.id)}`}>
+                  Voir le compte
+                </Link>
               </article>
             ))}
           </div>
