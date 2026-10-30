@@ -46,10 +46,11 @@ app = FastAPI(
 )
 
 # Le proxy Vite évite CORS ; ces origines permettent aussi d'appeler l'API directement
-origins = os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+origins = os.environ.get("CORS_ORIGINS", "http://localhost:5174,http://127.0.0.1:5174").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["Content-Disposition"],
