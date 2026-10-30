@@ -13,16 +13,16 @@ export default function LoginPage() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  async function handleSubmit(event) {
+  function handleSubmit(event) {
     event.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      await login(email.trim(), password);
+      login(email.trim(), password);
       navigate('/dashboard', { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Identifiants incorrects');
+      setError(err instanceof Error ? err.message : 'La connexion a échoué.');
     } finally {
       setLoading(false);
     }
