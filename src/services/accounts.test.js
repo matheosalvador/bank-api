@@ -1,9 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   depositIntoAccount,
+  getBeneficiaries,
   getAccount,
   getAccounts,
   openAccount,
+  saveBeneficiary,
+  transferBetweenAccounts,
 } from './accounts';
 
 describe('accounts', () => {
@@ -54,5 +57,33 @@ describe('accounts', () => {
     expect(() => depositIntoAccount('demo@noria.fr', 'unknown', 100)).toThrow(
       'Ce compte est introuvable.',
     );
+  });
+
+  it('transfers money between accounts and rejects invalid destinations or insufficient funds', () => {
+    const source = openAccount('demo@noria.fr');
+    const recipient = openAccount('other@noria.fr');
+    depositIntoAccount('demo@noria.fr', source.id, 5000);
+
+    const result = transferBetweenAccounts('demo@noria.fr', source.id, recipient.id, 1250);
+
+    expect(result.sourceAccount.balanceCents).toBe(3750);
+    expect(result.recipientAccount.balanceCents).toBe(1250);
+    expect(getAccount('demo@noria.fr', source.id).balanceCents).toBe(3750);
+    expect(getAccount('other@noria.fr', recipient.id).balanceCents).toBe(1250);
+    expect(() => transferBetweenAccounts('demo@noria.fr', source.id, 'unknown', 100))
+      .toThrow('Le compte destinataire est introuvable.');
+    expect(() => transferBetweenAccounts('demo@noria.fr', source.id, recipient.id, 4000))
+      .toThrow('Solde insuffisant pour effectuer ce virement.');
+  });
+
+  it('saves and updates a beneficiary without duplicating its account number', () => {
+    const account = openAccount('demo@noria.fr');
+
+    saveBeneficiary('demo@noria.fr', 'Alex', account.id);
+    saveBeneficiary('demo@noria.fr', 'Alex Martin', account.id);
+
+    expect(getBeneficiaries('demo@noria.fr')).toEqual([
+      { name: 'Alex Martin', accountId: account.id },
+    ]);
   });
 });

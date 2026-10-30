@@ -66,10 +66,13 @@ export default function DashboardPage() {
 
         <section className="dashboard-card dashboard-actions">
           <h2>Gérez vos comptes</h2>
-          <p className="intro">Consultez vos comptes ou ouvrez-en un nouveau en quelques instants.</p>
+          <p className="intro">Consultez vos comptes, effectuez un virement ou ouvrez-en un nouveau.</p>
           <div className="dashboard-links">
             <Link className="action-link action-link-secondary" to="/accounts">
               Voir la liste de mes comptes
+            </Link>
+            <Link className="action-link action-link-secondary" to="/transfers">
+              Effectuer un virement
             </Link>
             <Link className="action-link" to="/accounts/new">
               Ouvrir un nouveau compte

@@ -59,6 +59,12 @@ export default function AccountDetailPage() {
             >
               Effectuer un dépôt
             </Link>
+            <Link
+              className="action-link action-link-secondary"
+              to={`/transfers?source=${encodeURIComponent(account.id)}`}
+            >
+              Effectuer un virement
+            </Link>
           </section>
         )}
       </section>
