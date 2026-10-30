@@ -8,6 +8,7 @@ import AccountsPage from './pages/AccountsPage';
 import NewAccountPage from './pages/NewAccountPage';
 import AccountDetailPage from './pages/AccountDetailPage';
 import DepositPage from './pages/DepositPage';
+import TransferPage from './pages/TransferPage';
 import { getAuthToken } from './services/demoAuth';
 import './styles.css';
 
@@ -51,6 +52,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           element={(
             <ProtectedRoute>
               <DepositPage />
+            </ProtectedRoute>
+          )}
+        />
+        <Route
+          path="/transfers"
+          element={(
+            <ProtectedRoute>
+              <TransferPage />
             </ProtectedRoute>
           )}
         />

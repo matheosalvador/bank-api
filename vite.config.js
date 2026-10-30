@@ -7,5 +7,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
+    environmentOptions: {
+      jsdom: {
+        url: 'http://localhost:3000',
+      },
+    },
+    exclude: ['**/bank-api rollback US5 - Copie/**', '**/Front/**'],
   },
 });

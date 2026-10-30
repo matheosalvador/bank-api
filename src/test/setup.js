@@ -9,6 +9,13 @@ const localStorageMock = (() => {
     setItem: (key, value) => { store[key] = value.toString(); },
     removeItem: (key) => { delete store[key]; },
     clear: () => { store = {}; },
+    get length() {
+      return Object.keys(store).length;
+    },
+    key: (index) => {
+      const keys = Object.keys(store);
+      return keys[index] || null;
+    },
   };
 })();
 
@@ -19,6 +26,13 @@ const sessionStorageMock = (() => {
     setItem: (key, value) => { store[key] = value.toString(); },
     removeItem: (key) => { delete store[key]; },
     clear: () => { store = {}; },
+    get length() {
+      return Object.keys(store).length;
+    },
+    key: (index) => {
+      const keys = Object.keys(store);
+      return keys[index] || null;
+    },
   };
 })();
 
