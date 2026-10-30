@@ -68,7 +68,9 @@ async function api(method, endpoint, data = null, options = {}) {
     } catch (e) {
       // Si la réponse n'est pas du JSON, on garde le message par défaut
     }
-    throw new Error(errorMessage);
+    const error = new Error(errorMessage);
+    error.status = response.status;  // Ajoute le status HTTP à l'erreur
+    throw error;
   }
 
   // Parsage et retour de la réponse
