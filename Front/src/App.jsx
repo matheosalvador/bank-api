@@ -1,7 +1,4 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
 import './App.css'
 import { Routes, Route, Outlet, NavLink, Link } from 'react-router'
 import { useAuth } from "./context/AuthContext"
@@ -18,11 +15,48 @@ import Login from "./pages/Login.jsx"
 import NewAccount from "./pages/NewAccount.jsx"
 import Transfer from "./pages/Transfer.jsx"
 
+// Import CSS for pages
+import './pages/Auth.css'
+import './pages/Dashboard.css'
+import './pages/Accounts.css'
+import './pages/Forms.css'
+import './pages/Details.css'
+import './pages/History.css'
+import './pages/HomePage.css'
+
 function Header() {
-  const { token, logout } = useAuth();
-  return token
-    ? <button onClick={logout}>Déconnexion</button>
-    : <Link to="/login">Connexion</Link>;
+  const { token, logout, user } = useAuth();
+  return (
+    <header className="site-header">
+      <nav className="nav-container">
+        <div className="nav-brand">
+          <Link to="/" className="brand-link">Banque en Ligne</Link>
+        </div>
+        <div className="nav-links">
+          <NavLink to="/" className="nav-link">Accueil</NavLink>
+          {token && (
+            <>
+              <NavLink to="/dashboard" className="nav-link">Tableau de bord</NavLink>
+              <NavLink to="/accounts" className="nav-link">Comptes</NavLink>
+              <NavLink to="/transfer" className="nav-link">Virements</NavLink>
+              <NavLink to="/history" className="nav-link">Historique</NavLink>
+            </>
+          )}
+          <NavLink to="/register" className="nav-link">S'inscrire</NavLink>
+        </div>
+        <div className="nav-auth">
+          {token ? (
+            <>
+              <span className="user-email">{user?.email}</span>
+              <button onClick={logout} className="btn-logout">Déconnexion</button>
+            </>
+          ) : (
+            <Link to="/login" className="btn-login">Connexion</Link>
+          )}
+        </div>
+      </nav>
+    </header>
+  );
 }
 
 function Layout() {
@@ -31,6 +65,7 @@ function Layout() {
       <header>
         <nav>
           <Header />
+          <main className="main-content">
           <NavLink to="/">Home</NavLink>
           <NavLink to="/dashboard">Dashboard</NavLink>
           <NavLink to="/accounts">Accounts</NavLink>
