@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { logout } from '../services/demoAuth';
 
 export default function DashboardPage() {
