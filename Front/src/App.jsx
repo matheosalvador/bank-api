@@ -17,23 +17,27 @@ import './App.css'
 function Header() {
   const { token, logout } = useAuth();
   return token
-    ? <button onClick={logout}>Déconnexion</button>
-    : <Link to="/login">Connexion</Link>;
+    ? <button onClick={logout} className="btn btn-logout">Déconnexion</button>
+    : <Link to="/login" className="btn btn-login">Connexion</Link>;
 }
 
 function Layout() {
   return (
     <>
-      <header>
-        <nav>
-          <Header />
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/dashboard">Dashboard</NavLink>
-          <NavLink to="/accounts">Accounts</NavLink>
-          <NavLink to="/register">Register</NavLink>
+      <header className="site-header">
+        <nav className="nav-container">
+          <div className="nav-auth">
+            <Header />
+          </div>
+          <div className="nav-links">
+            <NavLink to="/" className="nav-link">Accueil</NavLink>
+            <NavLink to="/dashboard" className="nav-link">Tableau de bord</NavLink>
+            <NavLink to="/accounts" className="nav-link">Comptes</NavLink>
+            <NavLink to="/register" className="nav-link">S'inscrire</NavLink>
+          </div>
         </nav>
       </header>
-      <main>
+      <main className="main-content">
         <Outlet />
       </main>
     </>
