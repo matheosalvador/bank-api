@@ -149,7 +149,8 @@ a {
   font-weight: 600;
 }
 
-.field input {
+.field input,
+.field select {
   width: 100%;
   height: 49px;
   padding: 0 14px;
@@ -165,7 +166,8 @@ a {
   color: #a4afbf;
 }
 
-.field input:focus {
+.field input:focus,
+.field select:focus {
   border-color: #5484ed;
   box-shadow: 0 0 0 3px rgb(36 99 235 / 12%);
 }
@@ -203,6 +205,16 @@ a {
   border-radius: 8px;
   background: #fff5f5;
   color: #a92d2d;
+  font-size: 13px;
+}
+
+.form-success {
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid #c8e8d2;
+  border-radius: 8px;
+  background: #f1fbf4;
+  color: #267343;
   font-size: 13px;
 }
 
@@ -333,6 +345,7 @@ a {
   color: #fff;
   font-size: 13px;
   font-weight: 700;
+  cursor: pointer;
   text-align: center;
   text-decoration: none;
   transition: background 150ms ease, border-color 150ms ease;
@@ -462,13 +475,15 @@ a {
 }
 
 .account-detail-card,
-.deposit-card {
+.deposit-card,
+.transfer-card {
   max-width: 620px;
   margin: 0;
 }
 
 .account-detail-card h1,
-.deposit-card h1 {
+.deposit-card h1,
+.transfer-card h1 {
   margin: 13px 0 9px;
   font-family: Manrope, sans-serif;
   font-size: clamp(28px, 4vw, 36px);
@@ -496,7 +511,17 @@ a {
   margin: 24px 0;
 }
 
+.transfer-form {
+  display: grid;
+  gap: 18px;
+  margin: 24px 0 0;
+}
+
 .deposit-form .submit-button {
+  width: 100%;
+}
+
+.transfer-form .submit-button {
   width: 100%;
 }
 
@@ -517,6 +542,87 @@ a {
 }
 
 .demo-notice {
+  margin: 0;
+}
+
+.transaction-list {
+  display: grid;
+  gap: 14px;
+}
+
+.transaction-card {
+  padding: 22px 24px;
+  border: 1px solid #e8ecf3;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 36px rgb(26 45 84 / 5%);
+}
+
+.transaction-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.transaction-type {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.transaction-type-credit {
+  background: #eaf8ef;
+  color: #267343;
+}
+
+.transaction-type-debit {
+  background: #fff1f0;
+  color: #a92d2d;
+}
+
+.transaction-amount {
+  font-size: 17px;
+  white-space: nowrap;
+}
+
+.transaction-amount-credit {
+  color: #267343;
+}
+
+.transaction-amount-debit {
+  color: #a92d2d;
+}
+
+.transaction-date {
+  display: block;
+  margin-top: 10px;
+  color: #71809a;
+  font-size: 13px;
+}
+
+.transaction-accounts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 18px 0 0;
+}
+
+.transaction-accounts dt {
+  color: #71809a;
+  font-size: 12px;
+}
+
+.transaction-accounts dd {
+  overflow-wrap: anywhere;
+  margin: 5px 0 0;
+  color: #34425b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.transaction-empty-state {
   margin: 0;
 }
 
@@ -680,6 +786,10 @@ a {
   .account-preview {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .transaction-accounts {
+    grid-template-columns: 1fr;
   }
 
   .page-heading .action-link,

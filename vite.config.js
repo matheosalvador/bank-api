@@ -12,6 +12,6 @@ export default defineConfig({
         url: 'http://localhost:3000',
       },
     },
-    exclude: ['**/bank-api rollback US5 - Copie/**', '**/Front/**'],
+    exclude: ['**/bank-api rollback*/**', '**/Front/**'],
   },
 });

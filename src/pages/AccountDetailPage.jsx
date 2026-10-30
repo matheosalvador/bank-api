@@ -54,6 +54,12 @@ export default function AccountDetailPage() {
               <strong>{euroFormat.format(account.balanceCents / 100)}</strong>
             </div>
             <Link
+              className="action-link action-link-secondary"
+              to={`/accounts/${encodeURIComponent(account.id)}/transactions`}
+            >
+              Consulter les transactions
+            </Link>
+            <Link
               className="action-link"
               to={`/accounts/${encodeURIComponent(account.id)}/deposit`}
             >

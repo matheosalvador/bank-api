@@ -71,6 +71,21 @@ export default function TransferPage() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Combiner les autres comptes de l'utilisateur avec les bénéficiaires
+  const allRecipients = [
+    ...accounts
+      .filter((account) => account.id !== sourceAccountId)
+      .map((account) => ({
+        name: `${account.label} (Mes comptes)`,
+        accountId: account.id,
+        isUserAccount: true,
+      })),
+    ...beneficiaries.map((beneficiary) => ({
+      ...beneficiary,
+      isUserAccount: false,
+    })),
+  ];
+
   function handleLogout() {
     logout();
     navigate('/login', { replace: true });
@@ -79,8 +94,8 @@ export default function TransferPage() {
   function handleBeneficiaryChange(event) {
     const selectedAccountId = event.target.value;
     setRecipientAccountId(selectedAccountId);
-    const beneficiary = beneficiaries.find((item) => item.accountId === selectedAccountId);
-    setBeneficiaryName(beneficiary ? beneficiary.name : '');
+    const recipient = allRecipients.find((item) => item.accountId === selectedAccountId);
+    setBeneficiaryName(recipient ? recipient.name : '');
     setError('');
     setSuccess('');
   }
@@ -88,8 +103,8 @@ export default function TransferPage() {
   function handleRecipientAccountChange(event) {
     const accountId = event.target.value;
     setRecipientAccountId(accountId);
-    const beneficiary = beneficiaries.find((item) => item.accountId === accountId);
-    setBeneficiaryName(beneficiary ? beneficiary.name : '');
+    const recipient = allRecipients.find((item) => item.accountId === accountId);
+    setBeneficiaryName(recipient ? recipient.name : '');
     setError('');
     setSuccess('');
   }
@@ -98,6 +113,11 @@ export default function TransferPage() {
     setError('');
     setSuccess('');
     try {
+      const recipient = allRecipients.find((item) => item.accountId === recipientAccountId);
+      if (recipient?.isUserAccount) {
+        setError('Ce compte vous appartient déjà. Vous ne pouvez pas l’enregistrer comme bénéficiaire.');
+        return;
+      }
       const beneficiary = saveBeneficiary(email, beneficiaryName, recipientAccountId);
       setBeneficiaries(getBeneficiaries(email));
       setBeneficiaryError('');
@@ -184,18 +204,18 @@ export default function TransferPage() {
             </div>
 
             <div className="field">
-              <label htmlFor="transfer-beneficiary">Bénéficiaire enregistré</label>
+              <label htmlFor="transfer-beneficiary">Bénéficiaire ou mes autres comptes</label>
               <select
                 id="transfer-beneficiary"
                 onChange={handleBeneficiaryChange}
-                value={beneficiaries.some((item) => item.accountId === recipientAccountId)
+                value={allRecipients.some((item) => item.accountId === recipientAccountId)
                   ? recipientAccountId
                   : ''}
               >
-                <option value="">Choisir un bénéficiaire (facultatif)</option>
-                {beneficiaries.map((beneficiary) => (
-                  <option key={beneficiary.accountId} value={beneficiary.accountId}>
-                    {beneficiary.name} — {beneficiary.accountId}
+                <option value="">Choisir un bénéficiaire ou un autre de mes comptes (facultatif)</option>
+                {allRecipients.map((recipient) => (
+                  <option key={recipient.accountId} value={recipient.accountId}>
+                    {recipient.name} — {recipient.accountId}
                   </option>
                 ))}
               </select>
